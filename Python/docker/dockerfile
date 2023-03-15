@@ -1,0 +1,17 @@
+FROM ubuntu:20.04
+
+LABEL mad162pumpkin="dmjon162@yandex.ru"
+
+RUN apt-get update && \
+    apt-get install -y python && \
+    apt-get install -y git && \
+    rm -rf /var/lib/apt/lists/* &&\
+    apt-get clean
+
+ADD https://github.com/mad162pumpkin/FQW.git skipcache
+
+RUN git clone https://github.com/mad162pumpkin/Python_D.git
+
+WORKDIR /Python_D
+
+RUN python test.py
