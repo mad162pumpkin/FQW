@@ -1,0 +1,30 @@
+#!groovy
+
+properties([disableConcurrentBuilds()]) //указываем запрет на одновременную сборку нескольких контейнеров
+pipeline {
+    agent { 
+        label 'built-in'
+        }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10')) //указываем хранение данных 10 последних сборок
+        timestamps()
+    }
+    stages {
+        stage("docker image") {
+            steps {
+                echo "============== start building image =============="
+                dir ('JS/docker') { //обращаемся к директории где хранится контейнер
+                    sh 'docker build -t js:build .' //запускаем контейнер
+                echo "============== building succesful =============="
+                }
+            }
+        }
+        stage("docker clear") {
+            steps {
+                echo "============== start clear =============="
+                    sh 'docker system prune -f --volumes' //очищаем ненужный кэш
+                echo "============== clear succesful =============="
+            }
+        }
+    }
+}
